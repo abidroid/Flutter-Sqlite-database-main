@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_sqlite/db/database_helper.dart';
+import 'package:flutter_sqlite/model/student.dart';
 import 'package:flutter_sqlite/screens/users_lists_screen.dart';
 import 'package:flutter_sqlite/widgets/custom_text_field.dart';
 import 'package:flutter_sqlite/widgets/my_btn.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class AddUsersScreen extends StatelessWidget {
+class AddUsersScreen extends StatefulWidget {
   AddUsersScreen({super.key});
 
+  @override
+  State<AddUsersScreen> createState() => _AddUsersScreenState();
+}
+
+class _AddUsersScreenState extends State<AddUsersScreen> {
   final addUsersFormKey = GlobalKey<FormState>();
+
+  // will hold the values entered into TextField
+  String? name, mobile, course, totalFee, feePaid;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +38,8 @@ class AddUsersScreen extends StatelessWidget {
                     if (value == null || value.isEmpty) {
                       return "Enter your name";
                     }
+
+                    name = value;
                     return null;
                   },
                 ),
@@ -38,6 +50,7 @@ class AddUsersScreen extends StatelessWidget {
                     if (value == null || value.isEmpty) {
                       return "Enter your mobile no";
                     }
+                    mobile = value;
                     return null;
                   },
                 ),
@@ -47,6 +60,7 @@ class AddUsersScreen extends StatelessWidget {
                     if (value == null || value.isEmpty) {
                       return "Enter your course";
                     }
+                    course = value;
                     return null;
                   },
                 ),
@@ -56,6 +70,7 @@ class AddUsersScreen extends StatelessWidget {
                     if (value == null || value.isEmpty) {
                       return "Enter total fee";
                     }
+                    totalFee = value;
                     return null;
                   },
                 ),
@@ -65,6 +80,7 @@ class AddUsersScreen extends StatelessWidget {
                     if (value == null || value.isEmpty) {
                       return "Enter paid fee";
                     }
+                    feePaid = value;
                     return null;
                   },
                 ),
@@ -74,11 +90,24 @@ class AddUsersScreen extends StatelessWidget {
                     backgroundColor: Colors.green
                   ),
                   text: "Save",
-                  onPressed: () {
-                    Fluttertoast.showToast(msg: 'Record will be saved');
+                  onPressed: () async {
 
                     if (addUsersFormKey.currentState!.validate()) {
-                      Fluttertoast.showToast(msg: 'Record will be saved');
+
+                      Student student = Student(name: name!, mobile: mobile!, course: course!, totalFee: int.parse(totalFee!), feePaid: int.parse(feePaid!),);
+
+                      // pass this student object to database
+                      int result = await DatabaseHelper.instance.saveStudent(student);
+
+                      if( result > 0 ){
+                        Fluttertoast.showToast(msg: 'Record Saved');
+                      }else{
+                        Fluttertoast.showToast(msg: 'Record Failed');
+
+                      }
+
+                    }else{
+                      Fluttertoast.showToast( msg: "Please provide all values");
                     }
                   },
                 ),
