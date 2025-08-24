@@ -78,6 +78,25 @@ class DatabaseHelper {
 
 
   // 4. method to retrieve all students
+ Future<List<Student>> getAllStudents() async {
+
+    List<Student> students = [];
+    // read records from table
+
+    String query = 'Select * from tbl_student';
+    Database db = await this.database;
+    //var records = await db.rawQuery(query);
+    var records = await db.query('tbl_student');
+    for( var map in records){
+
+      Student student = Student.fromMap(map);
+      students.add(student);
+    }
+
+    await Future.delayed(Duration(seconds: 1));
+    return students;
+ }
+
 
   // 5. method to update student
 

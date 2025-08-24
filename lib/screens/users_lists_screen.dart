@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_sqlite/db/database_helper.dart';
+import 'package:flutter_sqlite/model/student.dart';
 import 'package:flutter_sqlite/screens/update_user_screen.dart';
 import 'package:flutter_sqlite/utils/delete_dialogue.dart';
 
-class UsersListsScreen extends StatelessWidget {
+class UsersListsScreen extends StatefulWidget {
   const UsersListsScreen({super.key});
 
+  @override
+  State<UsersListsScreen> createState() => _UsersListsScreenState();
+}
+
+class _UsersListsScreenState extends State<UsersListsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,64 +24,50 @@ class UsersListsScreen extends StatelessWidget {
           icon: Icon(Icons.arrow_back_ios, color: Colors.white),
         ),
       ),
-      body: ListView.builder(
-        itemCount: 3,
-        itemBuilder: (context, index) {
-          return Card(
-            margin: EdgeInsets.only(top: 10, left: 10, right: 10),
-            color: Colors.deepPurple,
-            child: Padding(
-              padding: const EdgeInsets.all(14.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Name      : Faiz Muhammad",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  Text(
-                    "Mobile No : +92123456789",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  Text(
-                    "Course    : Flutter",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  Text(
-                    "Total Fee : 20,000",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  Text(
-                    "Fee Paid  : 20,000",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => UpdateUserScreen(),
-                            ),
-                          );
-                        },
-                        icon: Icon(Icons.edit, color: Colors.white),
+      body: FutureBuilder<List<Student>>(
+        future: DatabaseHelper.instance.getAllStudents(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            List<Student> students = snapshot.data;
+            if (students.isEmpty) {
+              return Center(child: Text('No Records Found'));
+            } else {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListView.builder(
+                  itemCount: students.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Card(
+                      color: Colors.amber[100],
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('ID: ${students[index].id}', style: TextStyle(fontSize: 30),),
+
+                          Text('Name: ${students[index].name}', style: TextStyle(fontSize: 30),),
+                          Text('Course: ${students[index].course}', style: TextStyle(fontSize: 30),),
+                          Text('Mobile: ${students[index].mobile}', style: TextStyle(fontSize: 30),),
+                          Text('T Fee: ${students[index].totalFee}', style: TextStyle(fontSize: 30),),
+                          Text('Fee P: ${students[index].feePaid}', style: TextStyle(fontSize: 30),),
+                          Row(
+                            children: [
+                              Expanded(child: ElevatedButton(onPressed: (){}, child: const Text('Delete'))),
+                              Expanded(child: ElevatedButton(onPressed: (){}, child: const Text('Edit'))),
+                            ],
+                          )
+                        ],
                       ),
-                      IconButton(
-                        onPressed: () {
-                          DeleteDialogueBox(context);
-                          },
-                        icon: Icon(Icons.delete, color: Colors.red),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          );
+                    ),
+                    );
+                  },
+                ),
+              );
+            }
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
         },
       ),
     );
