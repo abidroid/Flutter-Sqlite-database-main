@@ -3,6 +3,7 @@ import 'package:flutter_sqlite/db/database_helper.dart';
 import 'package:flutter_sqlite/model/student.dart';
 import 'package:flutter_sqlite/screens/update_user_screen.dart';
 import 'package:flutter_sqlite/utils/delete_dialogue.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class UsersListsScreen extends StatefulWidget {
   const UsersListsScreen({super.key});
@@ -53,8 +54,44 @@ class _UsersListsScreenState extends State<UsersListsScreen> {
                           Text('Fee P: ${students[index].feePaid}', style: TextStyle(fontSize: 30),),
                           Row(
                             children: [
-                              Expanded(child: ElevatedButton(onPressed: (){}, child: const Text('Delete'))),
-                              Expanded(child: ElevatedButton(onPressed: (){}, child: const Text('Edit'))),
+                              Expanded(child: ElevatedButton(onPressed: (){
+
+                                showDialog(context: context,
+                                    builder: (context){
+                                   return AlertDialog(
+                                     title: const Text('Confirmation'),
+                                     content: const Text("Are you sure to delete ?"),
+                                     actions: [
+                                       TextButton(onPressed: (){
+                                         Navigator.of(context).pop();
+                                       }, child: const Text("No")),
+                                       TextButton(onPressed: () async{
+                                         Navigator.of(context).pop();
+                                         // Delete Logic here
+
+                                         int result = await DatabaseHelper.instance
+                                             .deleteStudent(students[index].id!);
+
+                                         if( result > 0){
+                                           Fluttertoast.showToast(msg: 'Deleted');
+
+                                           setState(() {
+
+                                           });
+                                         }else{
+                                           Fluttertoast.showToast(msg: 'Failed');
+
+                                         }
+                                       }, child: const Text("Yes")),
+                                     ],
+                                   );
+                                });
+
+                              }, child: const Text('Delete'))),
+
+                              Expanded(child: ElevatedButton(onPressed: (){
+
+                              }, child: const Text('Edit'))),
                             ],
                           )
                         ],
