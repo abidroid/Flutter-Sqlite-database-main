@@ -93,20 +93,34 @@ class DatabaseHelper {
       students.add(student);
     }
 
-    await Future.delayed(Duration(seconds: 1));
     return students;
  }
 
 
   // 5. method to update student
+  Future<int> updateStudent( Student s) async {
+
+    Database db = await this.database;
+
+    //int result = await db.update('tbl_student', s.toMap(), where: 'id=?', whereArgs: [s.id!]);
+
+    int result =  await db.rawUpdate('''
+    UPDATE tbl_student set name=?, mobile=?, 
+    course=?, totalFee=?, feePaid=? where
+    id=?
+    ''', [s.name, s.mobile, s.course, s.totalFee, s.feePaid, s.id]);
+    return result;
+  }
+
 
   // 6. method to delete student
   Future<int> deleteStudent(int id) async {
 
     Database db = await this.database;
 
-    int result = await db.rawDelete('Delete from tbl_student where id=?', [id]);
+    //int result = await db.rawDelete('Delete from tbl_student where id=?', [id]);
 
+    int result = await db.delete('tbl_student', where: 'id=?', whereArgs: [id]);
     return result;
   }
 }

@@ -12,6 +12,7 @@ class CustomTextField extends StatelessWidget {
     this.filled,
     this.validator,
     this.keyboardType = TextInputType.text, // default
+    this.initialValue,
   });
 
   final TextEditingController? controller;
@@ -23,6 +24,7 @@ class CustomTextField extends StatelessWidget {
   final bool? filled;
   final String? Function(String?)? validator;
   final TextInputType? keyboardType;
+  final String? initialValue;
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +32,7 @@ class CustomTextField extends StatelessWidget {
       keyboardType: keyboardType,
       controller: controller,
       validator: validator,
+      initialValue: initialValue,
       decoration: InputDecoration(
         contentPadding: contentPadding ?? EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         hintText: hintText,

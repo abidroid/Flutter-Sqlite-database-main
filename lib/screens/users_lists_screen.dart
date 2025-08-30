@@ -89,7 +89,19 @@ class _UsersListsScreenState extends State<UsersListsScreen> {
 
                               }, child: const Text('Delete'))),
 
-                              Expanded(child: ElevatedButton(onPressed: (){
+                              Expanded(child: ElevatedButton(onPressed: () async {
+
+                                Student s = students[index];
+
+                                bool? updated = await Navigator.of(context).push(MaterialPageRoute(builder: (context){
+                                  return UpdateUserScreen(student: s);
+                                }));
+
+                                if( updated != null && updated){
+                                  setState(() {
+
+                                  });
+                                }
 
                               }, child: const Text('Edit'))),
                             ],
